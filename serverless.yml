@@ -1,0 +1,72 @@
+service: serverless-template
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: ap-northeast-2
+  stage: dev
+  architecture: arm64
+  environment:
+    VAR_COMMON: "var-common"
+
+  httpApi:
+    cors:
+      allowedOrigins:
+        - '*'
+      allowedHeaders:
+        - Content-Type
+        - Authorization
+      allowedMethods:
+        - '*'
+      exposedResponseHeaders:
+        - Special-Response-Header
+      maxAge: 6000 # In seconds
+
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+
+package:
+  individually: true
+  patterns:
+    - '!./**'
+
+functions:
+  helloFunction:
+    handler: src/hello.handler.lambda_handler
+    architecture: arm64
+    runtime: python3.9
+    package:
+      individually: true
+      patterns:
+        - ./src/hello/**
+        - ./src/common/**  # 공통 코드 포함
+    events:
+      - httpApi:
+          path: /hello
+          method: get
+    environment:
+      VAR_HELLO: "var-hello"
+
+  goodbyeFunction:
+    handler: src/goodbye.handler.lambda_handler
+    architecture: arm64
+    runtime: python3.9
+    package:
+      individually: true
+      patterns:
+        - ./src/goodbye/**
+        - ./src/common/**  # 공통 코드 포함
+    events:
+      - httpApi:
+          path: /goodbye
+          method: post
+      - httpApi:
+          path: /goodbye
+          method: get
+    environment:
+      VAR_GOODBYE: "var-goodbye"
