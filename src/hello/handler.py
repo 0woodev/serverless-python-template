@@ -4,7 +4,8 @@ import json
 def lambda_handler(event, context):
     body = {
         "message": "Hello!",
-        "input": event
+        "event": event,
+        "context": str(context)
     }
 
     response = {

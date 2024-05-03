@@ -7,7 +7,8 @@ def lambda_handler(event, context):
 
     body = {
         "message": f"Goodbye! {name}",
-        "input": event
+        "event": event,
+        "context": str(context)
     }
 
     response = {
